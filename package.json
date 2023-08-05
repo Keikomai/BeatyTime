@@ -12,7 +12,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
+      "pre-commit": "yarn lint"
     }
   },
   "dependencies": {
@@ -39,8 +39,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-web": "~0.18.10",
     "react-redux": "^8.1.1",
-    "styled-components": "^6.0.1",
-    "typescript": "^4.9.4"
+    "styled-components": "^6.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -50,8 +49,8 @@
     "@hookform/resolvers": "*",
     "@react-native-community/eslint-config": "^3.2.0",
     "@react-native-community/eslint-plugin": "1.1.0",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "babel-preset-expo": "^9.2.0",
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.5.0",
@@ -65,6 +64,7 @@
     "prettier": "2.8.4",
     "react-native-codegen": "^0.0.7",
     "react-test-renderer": "18.2.0",
+    "typescript": "^5.1.6",
     "yup": "*"
   },
   "private": true
