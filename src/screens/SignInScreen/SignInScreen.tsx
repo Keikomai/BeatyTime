@@ -46,7 +46,7 @@ const SignInScreen = ({ navigation }: any) => {
 
   const onForgotPasswordPressed = useCallback(() => {
     navigation.navigate("ForgotPassword");
-  }, []);
+  }, [navigation]);
 
   const onSignUpPress = useCallback(() => {
     if (isError) {
