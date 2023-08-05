@@ -53,7 +53,7 @@ const SignInScreen = ({ navigation }: any) => {
       return;
     }
     navigation.navigate("SignUp");
-  }, [isError, navigation]);
+  }, [navigation]);
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
