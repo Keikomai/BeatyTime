@@ -2,11 +2,11 @@ import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Control, Controller } from "react-hook-form";
 import { COLOR } from "../../../constants/colorScheme";
-import { SignInModel } from "../../../types/mode.type";
+import { SignInModel, SignUpModel } from "../../../types/mode.type";
 
 type CustomInputProps = {
-  name: string;
-  control: Control<SignInModel>;
+  name: keyof (SignInModel | SignUpModel);
+  control: Control<SignInModel | SignUpModel>;
   placeholder?: string;
   secureTextEntry?: boolean;
 };

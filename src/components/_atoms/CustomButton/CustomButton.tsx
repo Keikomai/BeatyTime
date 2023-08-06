@@ -8,6 +8,7 @@ type CustomButtonProps = {
   bgColor?: string;
   fgColor?: string;
   type?: string;
+  isDisabled?: boolean;
 };
 
 const CustomButton = ({
@@ -16,10 +17,12 @@ const CustomButton = ({
   bgColor,
   fgColor,
   type = "PRIMARY",
+  isDisabled = false,
 }: CustomButtonProps) => {
   return (
     <Pressable
       onPress={onPress}
+      disabled={isDisabled}
       style={[
         styles.container,
         styles[`container_${type}`],

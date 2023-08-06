@@ -1,4 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
+import {
+  withAuthenticator,
+  useAuthenticator,
+} from "@aws-amplify/ui-react-native";
+import { Auth, AuthError, CognitoUser } from "aws-amplify";
+import Toast from "react-native-toast-message";
+
 import {
   View,
   Text,
@@ -7,6 +14,7 @@ import {
   useWindowDimensions,
   ScrollView,
   TextInput,
+  Button,
 } from "react-native";
 import CustomInput from "../../components/_atoms/CustomInput";
 import CustomButton from "../../components/_atoms/CustomButton";
@@ -15,34 +23,54 @@ import { FormProvider, useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { boolean, number, object, string } from "yup";
 import { SignInModel } from "../../types/mode.type";
+
+const validationSchema = object({
+  userName: string().required("Required*"),
+  password: string().required("Required*"),
+});
+
+const initialValues: SignInModel = {
+  userName: "maxim",
+  password: "11111111",
+};
+
 const SignInScreen = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
 
-  const validationSchema = object({
-    userName: string().required("validation.adGroupName"),
-    password: string().required("validation.selectStatus"),
-  });
-
-  const initialValues: SignInModel = {
-    userName: "kk",
-    password: "kkl",
-  };
-
-  const { formState, handleSubmit, setError, control, reset } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: initialValues,
     resolver: yupResolver(validationSchema),
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
 
-  const onSignInPressed = useCallback(
-    (data: SignInModel) => {
-      console.log(data, "data");
-
-      // navigation.navigate("Home");
-    },
-    [navigation]
-  );
+  const onSignInPressed = useCallback(async (data: SignInModel) => {
+    if (isLoading) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await Auth.signIn(data.userName, data.password).then(
+        (item): CognitoUser => {
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: `Hello ${item.username}`,
+            position: "bottom",
+          });
+        }
+      );
+    } catch (error: AuthError) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+        position: "bottom",
+      });
+    }
+    setIsLoading(false);
+  }, []);
 
   const onForgotPasswordPressed = useCallback(() => {
     navigation.navigate("ForgotPassword");
@@ -73,7 +101,11 @@ const SignInScreen = ({ navigation }: any) => {
           control={control}
         />
 
-        <CustomButton text="Sign In" onPress={handleSubmit(onSignInPressed)} />
+        <CustomButton
+          text={isLoading ? "Loading ..." : "Sign In"}
+          isDisabled={isLoading}
+          onPress={handleSubmit(onSignInPressed)}
+        />
 
         <CustomButton
           text="Forgot password?"
