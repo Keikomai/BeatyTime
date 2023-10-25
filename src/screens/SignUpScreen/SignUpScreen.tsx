@@ -65,7 +65,6 @@ const SignUpScreen = () => {
           //@ts-ignore
           navigation.navigate("ConfirmEmail", { userName: userName });
         });
-        console.log(res, "res");
       } catch (error: AuthError) {
         Toast.show({
           type: "error",

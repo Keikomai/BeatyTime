@@ -33,9 +33,7 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    console.log("sadcsdc");
     const listener = (data) => {
-      console.log(data, "data");
       if (data.payload.event === "signOut" || data.payload.event === "signIn") {
         checkUser();
       }
@@ -51,6 +49,7 @@ const Navigation = () => {
       </View>
     );
   }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>

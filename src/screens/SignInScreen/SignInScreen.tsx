@@ -1,10 +1,12 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import {
   withAuthenticator,
   useAuthenticator,
 } from "@aws-amplify/ui-react-native";
 import { Auth, AuthError, CognitoUser } from "aws-amplify";
 import Toast from "react-native-toast-message";
+import * as LocalAuthentication from "expo-local-authentication";
+import ReactNativeBiometrics, { BiometryTypes } from "react-native-biometrics";
 
 import {
   View,
@@ -15,6 +17,7 @@ import {
   ScrollView,
   TextInput,
   Button,
+  TouchableOpacity,
 } from "react-native";
 import CustomInput from "../../components/_atoms/CustomInput";
 import CustomButton from "../../components/_atoms/CustomButton";
@@ -36,6 +39,7 @@ const initialValues: SignInModel = {
 
 const SignInScreen = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
+  const rnBiometrics = new ReactNativeBiometrics();
 
   const { handleSubmit, control } = useForm({
     defaultValues: initialValues,
@@ -45,6 +49,11 @@ const SignInScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
 
+  useEffect(async () => {
+    const { biometryType } = await rnBiometrics.isSensorAvailable();
+
+    console.log("Biometrics is supported", biometryType);
+  }, []);
   const onSignInPressed = useCallback(async (data: SignInModel) => {
     if (isLoading) {
       return;
@@ -82,6 +91,12 @@ const SignInScreen = ({ navigation }: any) => {
     }
     navigation.navigate("SignUp");
   }, [isError, navigation]);
+
+  const scanFingerprint = async () => {
+    let result = await LocalAuthentication.authenticateAsync();
+    let result2 = await LocalAuthentication.getEnrolledLevelAsync();
+    console.log("Scan Result:", result2);
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -121,6 +136,9 @@ const SignInScreen = ({ navigation }: any) => {
           type="TERTIARY"
         />
       </View>
+      <TouchableOpacity onPress={scanFingerprint} style={styles.button}>
+        <Text style={styles.buttonText}>SCAN</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -129,6 +147,18 @@ const styles = StyleSheet.create({
   root: {
     alignItems: "center",
     padding: 20,
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 150,
+    height: 60,
+    backgroundColor: "#056ecf",
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: "#fff",
   },
 });
 
