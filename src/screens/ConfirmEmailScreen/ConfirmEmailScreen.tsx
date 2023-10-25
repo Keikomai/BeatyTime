@@ -3,28 +3,68 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import CustomInput from "../../components/_atoms/CustomInput";
 import CustomButton from "../../components/_atoms/CustomButton";
 import SocialSignInButtons from "../../components/_molecules/SocialSignInButtons";
-import { useNavigation } from "@react-navigation/core";
 import { useForm } from "react-hook-form";
+import { Auth, AuthError, CognitoUser } from "aws-amplify";
+import { boolean, number, object, string } from "yup";
+import { CodeModel } from "../../types/mode.type";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Toast, { ToastRef } from "react-native-toast-message";
 
-const ConfirmEmailScreen = () => {
-  const { control, handleSubmit } = useForm();
+type ConfirmEmailScreen = {
+  navigation: any;
+  route: any;
+};
 
-  const navigation = useNavigation();
+const validationSchema = object({
+  code: string().required("Required*"),
+});
 
-  const onConfirmPressed = useCallback((data) => {
-    console.warn(data);
-    //@ts-ignore
-    navigation.navigate("Home");
-  }, []);
+const initialValues: CodeModel = {
+  code: "",
+};
+
+const ConfirmEmailScreen = ({ navigation, route }: ConfirmEmailScreen) => {
+  const param: { userName: string } = route.params;
+
+  const { handleSubmit, control } = useForm({
+    defaultValues: initialValues,
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onConfirmPressed = useCallback(
+    async (data: CodeModel) => {
+      try {
+        await Auth.confirmSignUp(param.userName, data.code);
+      } catch (error: AuthError) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.message,
+          position: "bottom",
+        });
+      }
+
+      navigation.navigate("Home");
+    },
+    [param]
+  );
 
   const onSignInPress = useCallback(() => {
-    //@ts-ignore
     navigation.navigate("SignIn");
   }, []);
 
-  const onResendPress = useCallback(() => {
-    console.warn("onResendPress");
-  }, []);
+  const onResendPress = useCallback(async () => {
+    try {
+      await Auth.resendSignUp(param.userName);
+    } catch (error: AuthError) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+        position: "bottom",
+      });
+    }
+  }, [param]);
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -35,9 +75,6 @@ const ConfirmEmailScreen = () => {
           name="code"
           control={control}
           placeholder="Enter your confirmation code"
-          rules={{
-            required: "Confirmation code is required",
-          }}
         />
 
         <CustomButton text="Confirm" onPress={handleSubmit(onConfirmPressed)} />

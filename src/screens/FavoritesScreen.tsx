@@ -12,7 +12,6 @@ function FavoritesScreen() {
     return MEALS.filter((meal) => favoriteMealIds.find((id) => id === meal.id));
   }, [MEALS, favoriteMealIds]);
 
-  console.log("favorite screen");
   if (favoriteMeal.length === 0) {
     return (
       <View style={styles.rootContainer}>

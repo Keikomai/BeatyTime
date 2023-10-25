@@ -8,7 +8,7 @@ function CategoriesScreen({ navigation }) {
     function pressHandler() {
       navigation.navigate("MealsOverview", { categoryId: itemData.item.id });
     }
-    console.log("category screen");
+
     return (
       <CategoryGridTile
         title={itemData.item.title}
